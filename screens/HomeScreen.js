@@ -1,4 +1,4 @@
-// HomeScreen.js
+// screens/HomeScreen.js
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -26,8 +26,11 @@ export function HomeScreen() {
   const navigate = useNavigate();
   const locationState = useLocation();
 
+  // guard: locationState.search may be undefined — default to empty string
+  const rawSearch = (locationState && locationState.search) ? locationState.search : "";
+
   // read query params from router location
-  const params = new URLSearchParams(locationState.search);
+  const params = new URLSearchParams(rawSearch);
 
   const pickupParam = params.get("pickup");
   const destParam = params.get("destination");
@@ -54,13 +57,74 @@ export function HomeScreen() {
     setDestination(destParam);
   }, [pickupParam, destParam]);
 
-  // auto open ride options when both pickup and destination are set
+  // auto open ride options when both pickup and destination are set (and only once)
   useEffect(() => {
-    // if both locations exist and either trigger explicitly requested OR both exist, open ride sheet
-    if ((pickupParam && destParam && trigger === "rides") || (pickupParam && destParam && !showRide)) {
+    if (pickupParam && destParam && trigger === "rides") {
       setShowRide(true);
     }
   }, [pickupParam, destParam, trigger]);
+
+  // ----------------------
+  // Saved places handler
+  // ----------------------
+  function handleSavedPlace(item) {
+    // Map saved place id -> coordinates & label (MG Road, Tech Park, Airport T2)
+    // You can change these strings/coords as needed.
+    let addr = "";
+    let lat = "";
+    let lon = "";
+    if (item.id === "1") {
+      // Home -> MG Road, Bangalore
+      addr = "MG Road, Bangalore, Karnataka, India";
+      lat = "12.9754";
+      lon = "77.6050";
+    } else if (item.id === "2") {
+      // Work -> Manyata Tech Park (example)
+      addr = "Manyata Tech Park, Nagavara, Bangalore, Karnataka, India";
+      lat = "13.0389";
+      lon = "77.5970";
+    } else if (item.id === "3") {
+      // Airport -> Kempegowda International Airport (Terminal 2 area)
+      addr = "Kempegowda International Airport, Bangalore (Terminal 2)";
+      lat = "13.1986";
+      lon = "77.7066";
+    } else {
+      // fallback: use item.detail if provided
+      addr = item.detail || item.name || "Saved Place";
+      lat = item.lat || "";
+      lon = item.lon || "";
+    }
+
+    // set as destination (you can change to pickup by using pickup params)
+    const query = new URLSearchParams();
+    // If you want selected place to be pickup instead of destination, swap keys
+    query.set("destination", addr);
+    if (lat) query.set("destLat", lat);
+    if (lon) query.set("destLon", lon);
+
+    // optionally keep existing pickup if set
+    if (pickup) {
+      query.set("pickup", pickup);
+      if (pickupLat) query.set("pickupLat", pickupLat);
+      if (pickupLon) query.set("pickupLon", pickupLon);
+    }
+
+    navigate(`/?${query.toString()}`);
+  }
+
+  // ----------------------
+  // Services grid data
+  // ----------------------
+  const SERVICES = [
+    { id: "auto", name: "Auto", subtitle: "Short trips", color: "#10B981" },
+    { id: "trip", name: "Trip", subtitle: "Regular ride", color: "#3B82F6" },
+    { id: "bike", name: "Bike", subtitle: "Two-wheeler", color: "#F97316" },
+    { id: "intercity", name: "Intercity", subtitle: "Long haul", color: "#8B5CF6" },
+    { id: "reserve", name: "Reserve", subtitle: "Pre-book", color: "#06B6D4" },
+    { id: "courier", name: "Courier", subtitle: "Parcel delivery", color: "#F59E0B" },
+    { id: "teens", name: "Teens", subtitle: "Teen rides", color: "#EF4444" },
+    { id: "seniors", name: "Seniors", subtitle: "Senior-friendly", color: "#6B7280" }
+  ];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -95,7 +159,7 @@ export function HomeScreen() {
               <Ionicons name="menu" size={24} color={theme.colors.text} />
             </TouchableOpacity>
 
-            {/* single card with split halves: pickup | destination */}
+            {/* split card: pickup | destination */}
             <View style={styles.splitCard}>
               {/* left half */}
               <TouchableOpacity
@@ -138,7 +202,7 @@ export function HomeScreen() {
           </View>
         </View>
 
-        {/* ---------------- BOTTOM SCROLLABLE CONTENT (unchanged) ---------------- */}
+        {/* ---------------- BOTTOM SCROLLABLE CONTENT ---------------- */}
         <ScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
@@ -147,7 +211,10 @@ export function HomeScreen() {
           {/* SAVED PLACES / RECENT */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Saved Places</Text>
-            <RecentLocations onSelect={() => navigate("/search?type=destination")} />
+            <RecentLocations onSelect={handleSavedPlace} />
+            <Text style={{ marginTop: 8, color: theme.colors.muted, fontSize: 12 }}>
+              Tap a saved place to set as destination (MG Road, Tech Park, Airport T2)
+            </Text>
           </View>
 
           {/* QUICK BOOK */}
@@ -177,18 +244,38 @@ export function HomeScreen() {
             </View>
           </View>
 
-          {/* NEARBY DRIVER */}
+          {/* SERVICES GRID (replaces Nearby driver) */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Nearby Driver</Text>
-            <DriverCard />
+            <Text style={styles.sectionTitle}>Services</Text>
+            <Text style={styles.sectionSubtitle}>Choose a service tailored for women</Text>
+
+            <View style={styles.servicesGrid}>
+              {SERVICES.map((s) => (
+                <TouchableOpacity
+                  key={s.id}
+                  style={styles.serviceCard}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    // set a quick destination/preset or open the ride sheet — here we open ride options
+                    setShowRide(true);
+                  }}
+                >
+                  <View style={[styles.serviceIcon, { backgroundColor: s.color }]}>
+                    <Text style={styles.serviceIconText}>{s.name.charAt(0)}</Text>
+                  </View>
+                  <Text style={styles.serviceName}>{s.name}</Text>
+                  <Text style={styles.serviceSub}>{s.subtitle}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </ScrollView>
       </View>
 
-      {/* ---------------- RIDE OPTIONS SHEET ---------------- */}
+      {/* RIDE OPTIONS SHEET */}
       <RideOptionsCard visible={showRide} onClose={() => setShowRide(false)} />
 
-      {/* ---------------- SIDE MENU ---------------- */}
+      {/* SIDE MENU */}
       <SideMenu visible={menuVisible} onClose={() => setMenuVisible(false)} />
     </SafeAreaView>
   );
@@ -198,7 +285,7 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F9FAFB'
+    backgroundColor: "#F9FAFB"
   },
   webWrap: {
     flex: 1,
@@ -214,7 +301,7 @@ const styles = StyleSheet.create({
     height: 300,
     width: "100%",
     backgroundColor: "#EFF6FF",
-    position: 'relative'
+    position: "relative"
   },
 
   /* TOP OVERLAY container */
@@ -234,9 +321,9 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -254,12 +341,11 @@ const styles = StyleSheet.create({
   splitCard: {
     flex: 1,
     height: 56,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-    // subtle shadow
+    flexDirection: "row",
+    alignItems: "center",
+    overflow: "hidden",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -273,35 +359,33 @@ const styles = StyleSheet.create({
     })
   },
 
-  /* left half (pickup) */
   halfLeft: {
     flex: 1,
-    height: '100%',
-    justifyContent: 'center',
+    height: "100%",
+    justifyContent: "center",
     paddingLeft: 12
   },
   halfLeftInner: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center"
   },
 
-  /* right half (destination) */
   halfRight: {
     flex: 1,
-    height: '100%',
-    justifyContent: 'center',
+    height: "100%",
+    justifyContent: "center",
     paddingLeft: 12,
     paddingRight: 12
   },
   halfRightInner: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center"
   },
 
   divider: {
     width: 1,
-    height: '60%',
-    backgroundColor: '#F3F4F6'
+    height: "60%",
+    backgroundColor: "#F3F4F6"
   },
 
   halfLabel: {
@@ -320,7 +404,7 @@ const styles = StyleSheet.create({
   /* CONTENT BELOW MAP */
   content: {
     flex: 1,
-    backgroundColor: '#F9FAFB'
+    backgroundColor: "#F9FAFB"
   },
 
   scrollContent: {
@@ -343,7 +427,7 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 13,
     color: "#6B7280",
-    fontWeight: '500',
+    fontWeight: "500",
     marginBottom: 12
   },
 
@@ -353,11 +437,11 @@ const styles = StyleSheet.create({
   },
 
   quickBookCard: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 16,
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -375,8 +459,8 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 12
   },
 
@@ -390,6 +474,60 @@ const styles = StyleSheet.create({
   quickBookPrice: {
     color: "#6B7280",
     fontSize: 13,
-    fontWeight: '500'
+    fontWeight: "500"
+  },
+
+  /* SERVICES GRID */
+  servicesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 12
+  },
+
+  serviceCard: {
+    width: "48%",
+    backgroundColor: "#fff",
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 12,
+    alignItems: "flex-start",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8
+      },
+      android: {
+        elevation: 2
+      }
+    })
+  },
+
+  serviceIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10
+  },
+
+  serviceIconText: {
+    color: "#fff",
+    fontWeight: "900"
+  },
+
+  serviceName: {
+    fontWeight: "800",
+    fontSize: 15,
+    color: "#111827"
+  },
+
+  serviceSub: {
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 4
   }
 });

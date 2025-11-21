@@ -11,12 +11,12 @@ export function SideMenu({ visible, onClose }) {
     { id: '1', icon: 'home', title: 'Home', route: '/' },
     { id: '2', icon: 'time', title: 'My Rides', route: '/activity' },
     { id: '3', icon: 'person', title: 'Profile', route: '/profile' },
-    { id: '4', icon: 'card', title: 'Payment Methods', route: '/profile' },
+    { id: '4', icon: 'card', title: 'Payment Methods', route: '/payment-methods' },
     { id: '5', icon: 'settings', title: 'Settings', route: '/profile' },
-    { id: '6', icon: 'shield-checkmark', title: 'Safety', route: '/profile' },
+    { id: '6', icon: 'shield-checkmark', title: 'Safety', route: '/safety' },
     { id: '7', icon: 'notifications', title: 'Notifications', route: '/profile' },
-    { id: '8', icon: 'help-circle', title: 'Help & Support', route: '/profile' },
-    { id: '9', icon: 'information-circle', title: 'About', route: '/profile' }
+    { id: '8', icon: 'help-circle', title: 'Help & Support', route: '/help' },
+    { id: '9', icon: 'information-circle', title: 'About', route: '/about' }
   ];
 
   const handleMenuPress = (route) => {
@@ -47,8 +47,8 @@ export function SideMenu({ visible, onClose }) {
                   <Ionicons name="person" size={32} color="#fff" />
                 </View>
                 <View style={styles.profileInfo}>
-                  <Text style={styles.userName}>Sanathan NS</Text>
-                  <Text style={styles.userEmail}>sanathan@example.com</Text>
+                  <Text style={styles.userName}>Lavanya S</Text>
+                  <Text style={styles.userEmail}>Lavanya1205@gmail.com</Text>
                   <View style={styles.ratingBadge}>
                     <Ionicons name="star" size={12} color="#F59E0B" />
                     <Text style={styles.ratingText}>4.9</Text>

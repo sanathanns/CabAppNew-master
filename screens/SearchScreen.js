@@ -93,26 +93,26 @@ export function SearchScreen() {
 
   // Use typed text as fallback and navigate to results
   function showRides() {
-    // Both fields must have something (either selected or typed)
     const pickupValue = pickup ? pickup.name : queryPickup;
     const destinationValue = destination ? destination.name : queryDest;
 
     if (!pickupValue || !destinationValue) return;
 
-    // If we don't have coordinates (no suggestion selected) we will pass empty coords
     const params = new URLSearchParams();
     params.set("pickup", pickupValue);
+
     if (pickup && pickup.lat) {
       params.set("pickupLat", pickup.lat);
       params.set("pickupLon", pickup.lon);
     }
+
     params.set("destination", destinationValue);
+
     if (destination && destination.lat) {
       params.set("destLat", destination.lat);
       params.set("destLon", destination.lon);
     }
 
-    // Also set a trigger so home knows to auto-open ride sheet if needed
     params.set("trigger", "rides");
 
     navigate(`/results?${params.toString()}`);
@@ -135,10 +135,22 @@ export function SearchScreen() {
   }, []);
 
   const canShowRides =
-    (pickup || queryPickup.length >= 3) && (destination || queryDest.length >= 3);
+    (pickup || queryPickup.length >= 3) &&
+    (destination || queryDest.length >= 3);
 
   return (
     <SafeAreaView style={styles.safe}>
+
+      {/* ✅ BACK TO HOME BUTTON ADDED HERE */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigate("/")}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="arrow-back" size={22} color="#fff" />
+        <Text style={styles.backText}>Back to Home</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Search & select locations</Text>
 
       <View style={styles.field}>
@@ -195,7 +207,12 @@ export function SearchScreen() {
         </View>
       </View>
 
-      {loading && <ActivityIndicator style={{ marginTop: 8 }} color={theme.colors.primary} />}
+      {loading && (
+        <ActivityIndicator
+          style={{ marginTop: 8 }}
+          color={theme.colors.primary}
+        />
+      )}
 
       {/* Suggestions */}
       {!loading && results.length > 0 && (
@@ -204,8 +221,15 @@ export function SearchScreen() {
           data={results}
           keyExtractor={(item, idx) => String(idx)}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.resultRow} onPress={() => selectResult(item)}>
-              <Ionicons name="location-outline" size={18} color={theme.colors.primary} />
+            <TouchableOpacity
+              style={styles.resultRow}
+              onPress={() => selectResult(item)}
+            >
+              <Ionicons
+                name="location-outline"
+                size={18}
+                color={theme.colors.primary}
+              />
               <View style={{ marginLeft: 10 }}>
                 <Text numberOfLines={1} style={styles.resultTitle}>
                   {item.name.split(",")[0]}
@@ -219,10 +243,17 @@ export function SearchScreen() {
         />
       )}
 
-      {/* No suggestions but typed text — show gentle hint */}
-      {!loading && results.length === 0 && (activeField === "pickup" ? queryPickup.length >= 3 : activeField === "destination" ? queryDest.length >= 3 : false) && (
-        <Text style={styles.hint}>No suggestions — you can still use the typed address.</Text>
-      )}
+      {!loading &&
+        results.length === 0 &&
+        (activeField === "pickup"
+          ? queryPickup.length >= 3
+          : activeField === "destination"
+          ? queryDest.length >= 3
+          : false) && (
+          <Text style={styles.hint}>
+            No suggestions — you can still use the typed address.
+          </Text>
+        )}
 
       <TouchableOpacity
         style={[styles.showButton, !canShowRides && { opacity: 0.5 }]}
@@ -237,6 +268,25 @@ export function SearchScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, padding: 18, backgroundColor: "#fff" },
+
+  /* NEW BACK BUTTON */
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    marginBottom: 12,
+    alignSelf: "flex-start",
+  },
+  backText: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "800",
+    marginLeft: 6,
+  },
+
   title: { fontSize: 20, fontWeight: "900", marginBottom: 14, color: theme.colors.text },
   field: { marginBottom: 10 },
   label: { fontSize: 12, fontWeight: "700", color: "#6B7280", marginBottom: 6 },

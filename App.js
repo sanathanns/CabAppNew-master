@@ -13,6 +13,13 @@ import { SearchScreen } from "./screens/SearchScreen";
 import { RideResultsScreen } from "./screens/RideResultsScreen";
 import { DriverDetailsScreen } from "./screens/DriverDetailsScreen";
 import { PaymentScreen } from "./screens/PaymentScreen";
+import { SafetyScreen } from "./screens/SafetyScreen";
+import { HelpSupportScreen } from "./screens/HelpSupportScreen";
+import { AboutScreen } from "./screens/AboutScreen";
+import { PaymentMethodsScreen } from "./screens/PaymentMethodsScreen";
+
+
+
 
 // ------------------------------
 // TABS WRAPPER - Only Home / Activity / Profile
@@ -24,6 +31,13 @@ function TabLayout() {
         <Route path="/" element={<HomeScreen />} />
         <Route path="/activity" element={<ActivityScreen />} />
         <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/safety" element={<SafetyScreen />} />
+        <Route path="/help" element={<HelpSupportScreen />} />
+        <Route path="/about" element={<AboutScreen />} />
+        <Route path="/payment-methods" element={<PaymentMethodsScreen />} />
+
+
+
       </Routes>
     </View>
   );

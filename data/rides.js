@@ -9,8 +9,8 @@ export const RIDES = [
     carModel: "Maruti Alto",
     seats: 4,
     image: "https://cdn.pixabay.com/photo/2022/01/05/09/56/indian-car-6916758_1280.jpg", // small car icon
-    driverName: "Sanathan",
-    driverImg: "https://www.m9.news/wp-content/uploads/2024/11/hero-yash.jpg",
+    driverName: "Lakshmi",
+    driverImg: "https://www.globalgiving.org/pfil/16908/ph_16908_125418.jpg",
     driverPhone: "+91-9876543210",
   },
   {
@@ -22,8 +22,8 @@ export const RIDES = [
     carModel: "Honda City",
     seats: 4,
     image: "https://cdn.pixabay.com/photo/2020/03/25/15/15/honda-4967605_1280.jpg",
-    driverName: "Sabeel",
-    driverImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqtG3McqUitehKF6nCcpm9F7d37r79uht4cU1kx8i0-X0gK_Xu434xh_yajOFC4DGwGlE&usqp=CAU",
+    driverName: "Poornima",
+    driverImg: "https://etimg.etb2bimg.com/photo/73115046.cms",
     driverPhone: "+91-9123456780",
   },
   {
@@ -35,8 +35,8 @@ export const RIDES = [
     carModel: "Toyota Fortuner",
     seats: 6,
     image: "https://cdn.pixabay.com/photo/2020/03/17/19/35/gulf-of-finland-4941643_1280.jpg",
-    driverName: "Mahadevprasad",
-    driverImg: "https://www.cinejosh.com/newsimg/newsmainimg/rishab-shetty-tollywood-debut-kantara-star-sets-his-sights-on-telugu-cinema_b_2110240404.jpg",
+    driverName: "Aishwarya",
+    driverImg: "https://media.dtnext.in/imported/import/Images/Article/201511140213182854_Chennai-women-get-trained-as-drivers-for-hire_SECVPF.gif",
     driverPhone: "+91-9001122334",
   },
 ];

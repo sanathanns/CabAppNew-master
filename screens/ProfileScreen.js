@@ -45,7 +45,7 @@ export function ProfileScreen() {
             </View>
             
             <View style={styles.profileInfo}>
-              <Text style={styles.name}>Sanathan NS</Text>
+              <Text style={styles.name}>Lavanya S</Text>
               <Text style={styles.memberSince}>Member since 2024</Text>
               <View style={styles.ratingContainer}>
                 <Ionicons name="star" size={16} color="#F59E0B" />
