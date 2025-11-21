@@ -1,0 +1,42 @@
+// ./data/rides.js
+export const RIDES = [
+  {
+    id: "economy",
+    name: "Economy",
+    eta: "3-5 min",
+    base: 30,
+    per_km: 10,
+    carModel: "Maruti Alto",
+    seats: 4,
+    image: "https://cdn.pixabay.com/photo/2022/01/05/09/56/indian-car-6916758_1280.jpg", // small car icon
+    driverName: "Sanathan",
+    driverImg: "https://www.m9.news/wp-content/uploads/2024/11/hero-yash.jpg",
+    driverPhone: "+91-9876543210",
+  },
+  {
+    id: "sedan",
+    name: "Sedan",
+    eta: "4-6 min",
+    base: 50,
+    per_km: 14,
+    carModel: "Honda City",
+    seats: 4,
+    image: "https://cdn.pixabay.com/photo/2020/03/25/15/15/honda-4967605_1280.jpg",
+    driverName: "Sabeel",
+    driverImg: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqtG3McqUitehKF6nCcpm9F7d37r79uht4cU1kx8i0-X0gK_Xu434xh_yajOFC4DGwGlE&usqp=CAU",
+    driverPhone: "+91-9123456780",
+  },
+  {
+    id: "suv",
+    name: "SUV",
+    eta: "6-9 min",
+    base: 80,
+    per_km: 20,
+    carModel: "Toyota Fortuner",
+    seats: 6,
+    image: "https://cdn.pixabay.com/photo/2020/03/17/19/35/gulf-of-finland-4941643_1280.jpg",
+    driverName: "Mahadevprasad",
+    driverImg: "https://www.cinejosh.com/newsimg/newsmainimg/rishab-shetty-tollywood-debut-kantara-star-sets-his-sights-on-telugu-cinema_b_2110240404.jpg",
+    driverPhone: "+91-9001122334",
+  },
+];
